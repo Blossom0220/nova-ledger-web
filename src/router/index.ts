@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -76,12 +77,25 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to) => {
-  const token = localStorage.getItem('token')
-  if (to.meta.requiresAuth !== false && !token) {
+// 初始化标记：防止每次路由切换都重复拉取
+let initialized = false
+
+router.beforeEach(async (to) => {
+  // 初始化状态（刷新后只执行一次）
+  if (!initialized) {
+    initialized = true
+    const token = localStorage.getItem('token')
+    if (token) {
+      const userStore = useUserStore()
+      await userStore.init()
+    }
+  }
+
+  const storeToken = localStorage.getItem('token')
+  if (to.meta.requiresAuth !== false && !storeToken) {
     return '/login'
   }
-  if ((to.name === 'Login' || to.name === 'Register') && token) {
+  if ((to.name === 'Login' || to.name === 'Register') && storeToken) {
     return '/'
   }
 })

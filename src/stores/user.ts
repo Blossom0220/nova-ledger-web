@@ -40,21 +40,48 @@ export const useUserStore = defineStore('user', () => {
     books.value = []
     localStorage.removeItem('token')
     localStorage.removeItem('user')
+    localStorage.removeItem('currentBookId')
+  }
+
+  /**
+   * 页面刷新后初始化：恢复 token/用户信息，拉取账本列表
+   */
+  async function init() {
+    const savedToken = localStorage.getItem('token')
+    if (!savedToken) return false
+
+    token.value = savedToken
+    const savedUser = localStorage.getItem('user')
+    if (savedUser) user.value = JSON.parse(savedUser)
+
+    await fetchBooks()
+    return true
   }
 
   async function fetchBooks() {
-    const res = await bookApi.getBooks()
-    if (res.code === 200) {
-      books.value = res.data
-      if (!currentBook.value && res.data.length > 0) {
-        currentBook.value = res.data[0]
+    try {
+      const res = await bookApi.getBooks()
+      if (res.code === 200) {
+        books.value = res.data
+        if (res.data.length > 0) {
+          // 优先选 localStorage 记录的账本 ID
+          const savedBookId = localStorage.getItem('currentBookId')
+          const found = savedBookId ? res.data.find((b: Book) => b.id === Number(savedBookId)) : null
+          currentBook.value = found || res.data[0]
+        }
       }
+    } catch {
+      // token 失效等情况，静默处理
     }
   }
 
   function setCurrentBook(book: Book) {
     currentBook.value = book
+    localStorage.setItem('currentBookId', String(book.id))
   }
 
-  return { user, token, books, currentBook, login, register, logout, fetchBooks, setCurrentBook }
+  return {
+    user, token, books, currentBook,
+    login, register, logout, init, fetchBooks, setCurrentBook,
+  }
 })
