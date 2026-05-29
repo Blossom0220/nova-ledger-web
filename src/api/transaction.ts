@@ -1,13 +1,16 @@
 import request from './request'
 import type { ApiResponse, PageResult } from './types'
 
-export interface Transaction {
+export interface TransactionVO {
   id: number
   userId: number
   bookId: number
   accountId: number
+  accountName: string
   toAccountId?: number
+  toAccountName?: string
   categoryId?: number
+  categoryName?: string
   type: 'INCOME' | 'EXPENSE' | 'TRANSFER'
   amount: number
   transactionTime: string
@@ -31,16 +34,16 @@ export interface TransactionQuery {
 
 export const transactionApi = {
   search(bookId: number, params: TransactionQuery) {
-    return request.get<any, ApiResponse<PageResult<Transaction>>>(`/ledger/books/${bookId}/transactions`, { params })
+    return request.get<any, ApiResponse<PageResult<TransactionVO>>>(`/ledger/books/${bookId}/transactions`, { params })
   },
   get(bookId: number, id: number) {
-    return request.get<any, ApiResponse<Transaction>>(`/ledger/books/${bookId}/transactions/${id}`)
+    return request.get<any, ApiResponse<TransactionVO>>(`/ledger/books/${bookId}/transactions/${id}`)
   },
-  create(bookId: number, data: Partial<Transaction>) {
-    return request.post<any, ApiResponse<Transaction>>(`/ledger/books/${bookId}/transactions`, data)
+  create(bookId: number, data: any) {
+    return request.post<any, ApiResponse<TransactionVO>>(`/ledger/books/${bookId}/transactions`, data)
   },
-  update(bookId: number, id: number, data: Partial<Transaction>) {
-    return request.put<any, ApiResponse<Transaction>>(`/ledger/books/${bookId}/transactions/${id}`, data)
+  update(bookId: number, id: number, data: any) {
+    return request.put<any, ApiResponse<TransactionVO>>(`/ledger/books/${bookId}/transactions/${id}`, data)
   },
   delete(bookId: number, id: number) {
     return request.delete<any, ApiResponse<null>>(`/ledger/books/${bookId}/transactions/${id}`)

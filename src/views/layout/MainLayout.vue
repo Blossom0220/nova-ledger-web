@@ -1,6 +1,5 @@
 <template>
   <el-container class="main-layout">
-    <!-- 侧边栏 -->
     <el-aside :width="isCollapse ? '64px' : '220px'" class="sidebar">
       <div class="logo" @click="router.push('/')">
         <el-icon :size="24"><Coin /></el-icon>
@@ -46,6 +45,10 @@
           <el-icon><TrendCharts /></el-icon>
           <template #title>统计报表</template>
         </el-menu-item>
+        <el-menu-item index="/tags">
+          <el-icon><PriceTag /></el-icon>
+          <template #title>标签管理</template>
+        </el-menu-item>
         <el-menu-item index="/settings">
           <el-icon><Setting /></el-icon>
           <template #title>设置</template>
@@ -54,7 +57,6 @@
     </el-aside>
 
     <el-container>
-      <!-- 顶部栏 -->
       <el-header class="header">
         <el-button text @click="isCollapse = !isCollapse">
           <el-icon><Fold v-if="!isCollapse" /><Expand v-else /></el-icon>
@@ -74,7 +76,6 @@
         </el-dropdown>
       </el-header>
 
-      <!-- 内容区 -->
       <el-main class="main-content">
         <router-view />
       </el-main>
@@ -88,7 +89,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
 import {
-  Coin, Odometer, List, Wallet, CollectionTag,
+  Coin, Odometer, List, Wallet, CollectionTag, PriceTag,
   DataBoard, Clock, CreditCard, TrendCharts, Setting,
   Fold, Expand, UserFilled, ArrowDown,
 } from '@element-plus/icons-vue'

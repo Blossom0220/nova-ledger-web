@@ -66,6 +66,11 @@ const router = createRouter({
           name: 'Settings',
           component: () => import('@/views/settings/BookSetting.vue'),
         },
+        {
+          path: 'tags',
+          name: 'Tags',
+          component: () => import('@/views/settings/TagManager.vue'),
+        },
       ],
     },
   ],

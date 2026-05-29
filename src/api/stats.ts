@@ -25,6 +25,14 @@ export interface CategoryStats {
   color: string
 }
 
+export interface AccountBalanceInfo {
+  accountId: number
+  name: string
+  type: string
+  balance: number
+  currency: string
+}
+
 export const statsApi = {
   overview(bookId: number, month?: string) {
     const params: any = {}
@@ -40,5 +48,8 @@ export const statsApi = {
     const params: any = { startDate, endDate }
     if (type) params.type = type
     return request.get<any, ApiResponse<CategoryStats[]>>(`/ledger/books/${bookId}/stats/by-category`, { params })
+  },
+  accountBalances(bookId: number) {
+    return request.get<any, ApiResponse<AccountBalanceInfo[]>>(`/ledger/books/${bookId}/stats/accounts`)
   },
 }
