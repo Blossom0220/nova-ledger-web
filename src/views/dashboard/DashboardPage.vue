@@ -62,9 +62,9 @@
       </el-col>
     </el-row>
 
-    <!-- 图表 + 最近交易 -->
+    <!-- 收支趋势 + 账户余额 -->
     <el-row :gutter="16" style="margin-top: 16px">
-      <el-col :xs="24" :sm="16">
+      <el-col :xs="24" :sm="14">
         <el-card shadow="hover">
           <template #header>
             <span>📊 收支趋势</span>
@@ -73,7 +73,7 @@
           <div ref="trendChartRef" style="height: 280px"></div>
         </el-card>
       </el-col>
-      <el-col :xs="24" :sm="8">
+      <el-col :xs="24" :sm="10">
         <el-card shadow="hover">
           <template #header>
             <span>💰 账户余额</span>
@@ -89,6 +89,7 @@
       </el-col>
     </el-row>
 
+    <!-- 分类饼图 + 最近交易 -->
     <el-row :gutter="16" style="margin-top: 16px">
       <el-col :xs="24" :sm="12">
         <el-card shadow="hover">
@@ -198,7 +199,7 @@ async function loadAll() {
   // 图表
   const { start, end } = getMonthRange()
 
-  // 趋势（用日统计）——尝试调用daily，没有则用byCategory替代
+  // 趋势（用日统计）
   const trendRes = await statsApi.daily(bid, start, end).catch(() => null)
   if (trendRes?.code === 200 && trendRes.data.length > 0) {
     renderTrendChart(trendRes.data)
@@ -232,13 +233,14 @@ function renderCategoryChart(data: any[]) {
   if (!categoryChart) categoryChart = echarts.init(categoryChartRef.value)
   const sorted = [...data].sort((a: any, b: any) => b.amount - a.amount).slice(0, 5)
   categoryChart.setOption({
-    tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+    tooltip: { trigger: 'item', formatter: '{b}: ¥{c} ({d}%)' },
+    legend: { bottom: 0, type: 'scroll' },
     series: [{
       type: 'pie',
-      radius: ['30%', '65%'],
-      center: ['50%', '50%'],
+      radius: ['30%', '60%'],
+      center: ['50%', '45%'],
       data: sorted.map((d: any) => ({
-        name: d.categoryName,
+        name: d.categoryName + (d.percentage ? ` (${d.percentage}%)` : ''),
         value: d.amount,
         itemStyle: d.color ? { color: d.color } : undefined,
       })),
